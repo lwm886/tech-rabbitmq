@@ -1,0 +1,33 @@
+server:
+  port: 8080
+spring:
+  rabbitmq:
+#   单机连接配置host port即可
+#    host: 192.168.50.134
+#    port: 5672
+
+#   集群连接信息
+    addresses: 192.168.50.134:5673,192.168.50.134:5672,192.168.50.134:5674
+
+    virtual-host: /dev
+    username: tech
+    password: tech
+    # 开启发送确认机制，感知消息是否到达交换机
+    publisher-confirm-type: correlated
+
+    # 开启消息从交换机到队列的确认机制，感知消息是否到达队列
+    publisher-returns: true
+    # true表示交换机转发消息到队列失败，将消息返给发送者
+    template:
+      mandatory: true
+
+    #开启消费者手动确认
+    listener:
+      simple:
+        acknowledge-mode: manual
+        retry:
+          enabled: true
+          max-attempts: 3  #重试次数
+          max-interval: 100000   # 重试最大间隔时间
+          initial-interval: 1000  # 重试初始间隔时间
+          multiplier: 3 # 间隔时间乘子，上次间隔时间*乘子=下一次的间隔时间，最大不能超过设置的最大间隔时间
